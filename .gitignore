@@ -1,0 +1,16 @@
+# Log files
+*.log
+
+# Temporary Python files and caches
+*.pyc
+__pycache__/
+.pytest_cache/
+.coverage*
+
+# pip egg installation files
+*.egg-info/
+.eggs/
+
+# IDE settings
+.idea/*
+.vscode/*

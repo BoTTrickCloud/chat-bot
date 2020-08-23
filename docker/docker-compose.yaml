@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+
+  chat-www:
+    container_name: chat-www
+    image: chat-www
+    hostname: docker-chat-www
+    tty: true
+    restart: unless-stopped
+    build:
+      context: ../
+      dockerfile: docker/www/Dockerfile
+    ports:
+    - "1080:80"
+
+  chat-api:
+    container_name: chat-api
+    image: chat-api
+    hostname: docker-chat-api
+    tty: true
+    restart: unless-stopped
+    depends_on:
+    - chat-bert
+    build:
+      context: ../
+      dockerfile: docker/api/Dockerfile
+    environment:
+    - BERT_HOST=chat-bert
+    - DB_PATH=/data/qas.sqlite
+    volumes:
+    - "/home/mato/Dev/bottrick/chatbot/data/db:/data:rw"
+    ports:
+    - "5000:8080"
+
+  chat-bert:
+    container_name: chat-bert
+    image: chat-bert
+    hostname: docker-chat-bert
+    tty: true
+    restart: unless-stopped
+    build:
+      context: ../
+      dockerfile: docker/bert/Dockerfile
+      args:
+        NUM_WORKER: "1"
+    volumes:
+    - "/home/mato/Dev/bottrick/chatbot/data/model/multi_cased_L-12_H-768_A-12:/model:ro"
+    ports:
+    - "5555:5555"
+    - "5556:5556"
