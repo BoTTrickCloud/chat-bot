@@ -18,4 +18,5 @@ Qas = Table(
 
 STATIC = {
     "about_me": "A chatbot is an artificial intelligence (AI) software that can simulate a conversation (or a chat) with a user in natural language through messaging application,",
+    "contact_form": "Contact form redirect (somewhere on your pages)."
 }
