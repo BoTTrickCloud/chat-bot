@@ -55,6 +55,8 @@
 			let aboutMe = $('<div>').addClass('message buttons choice').append(
 			    $('<a>').attr('href', '#').attr('data-action', 'about_me').html('About Me')
 			);
+			// Only for DEMO
+			chatBotWindow.toggle();
 
 			chatBot.find('.chat-icon').click(function() {
 				chatBotWindow.toggle();

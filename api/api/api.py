@@ -95,10 +95,10 @@ async def qas_get(request, *args):
     """
     Get list of QAS from DB, TODO: pagination
     """
-    columns = [Qas.c.id, Qas.c.question, Qas.c.answer, Qas.c.static]
+    columns = [Qas.c.id, Qas.c.question, Qas.c.answer]
 
     async with request.config_dict["db"].connect() as conn:
-        data_res = await conn.execute(sql.select(columns))
+        data_res = await conn.execute(sql.select(columns).where(Qas.c.static.is_(False)))
         data = await data_res.fetchall()
 
     column_names = [column.name for column in columns]
@@ -130,6 +130,7 @@ async def qas_put(request, *args):
 
     qas.update({"id": _id[0]})
     qas.pop("vector")
+    qas.pop("static")
     return web.json_response(qas)
 
 
@@ -144,7 +145,6 @@ async def qas_delete(request, *args):
         "id": data["id"],
         "question": data["question"],
         "answer": data["answer"],
-        "static": data["static"],
     }
     async with request.config_dict["db"].connect() as conn:
         await conn.execute(Qas.delete().where(Qas.c.id == data["id"]))
@@ -176,4 +176,5 @@ async def qas_post(request, *args):
 
     qas.update({"id": data["id"]})
     qas.pop("vector")
+    qas.pop("static")
     return web.json_response(qas)
