@@ -1,186 +1,363 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport"
-	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>BoTTrick ChatBot</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+	<link href="assets/css/default.css" rel="stylesheet" type="text/css" media="all" />
+	<link href="assets/css/fonts.css" rel="stylesheet" type="text/css" media="all" />
 
-	<!--<link rel="stylesheet" href="./assets/css/bootstrap.min.css">-->
+<!--[if IE 6]><link href="default_ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+
+<!--	Chatbot-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
-	<link rel="stylesheet" href="./assets/css/style.css">
-
+	<link rel="stylesheet" href="assets/css/style.css">
 	<script src="assets/js/jquery-3.3.1.min.js"></script>
+<!--	Chatbot-->
+	<!--	ADMIN-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" />
+  	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.css" />
+  	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.1.2/css/buttons.dataTables.css" />
+  	<link rel="stylesheet" href="https://cdn.datatables.net/select/1.1.2/css/select.dataTables.css" />
+  	<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.0.2/css/responsive.dataTables.css" />
+
+	<script src="https://code.jquery.com/jquery-1.12.4.js" ></script>
+<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js" ></script>
+<script src="https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.js" ></script>
+<script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.js" ></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.js" ></script>
+<script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.js" ></script>
+<script src="assets/js/dataTables.altEditor.free.js" ></script>
+<script>
+$(document).ready(function() {
+
+  var columnDefs = [
+  {
+    data: "id",
+    title: "ID",
+    type: "readonly",
+    width: "10%"
+  },
+  {
+    data: "question",
+    title: "Question"
+  },
+ {
+    data: "answer",
+    title: "Answer"
+  }
+  ];
+
+  var myTable;
+
+  myTable = $('#example').DataTable({
+    "sPaginationType": "full_numbers",
+    ajax: {
+        // url : "http://localhost:8080/qas",
+        url : "https://chatbot.bottrick.com/qas",
+        dataSrc : ''
+    },
+    columns: columnDefs,
+	    dom: 'Bfrtip',        // Needs button container
+        select: 'single',
+        responsive: true,
+        altEditor: true,     // Enable altEditor
+        buttons: [{
+            text: 'Add',
+            name: 'add'        // do not change name
+        },
+        {
+            extend: 'selected', // Bind to Selected row
+            text: 'Edit',
+            name: 'edit'        // do not change name
+        },
+        {
+            extend: 'selected', // Bind to Selected row
+            text: 'Delete',
+            name: 'delete'      // do not change name
+        },
+        {
+            text: 'Refresh',
+            name: 'refresh'      // do not change name
+        }],
+        onAddRow: function(datatable, rowdata, success, error) {
+            $.ajax({
+                // a tipycal url would be / with type='PUT'
+                url: "https://chatbot.bottrick.com/qas",
+                type: 'PUT',
+                data: rowdata,
+                success: success,
+                error: error
+            });
+        },
+        onDeleteRow: function(datatable, rowdata, success, error) {
+            $.ajax({
+                // a tipycal url would be /{id} with type='DELETE'
+                url: "https://chatbot.bottrick.com/qas",
+                type: 'DELETE',
+                data: rowdata,
+                success: success,
+                error: error
+            });
+        },
+        onEditRow: function(datatable, rowdata, success, error) {
+            $.ajax({
+                // a tipycal url would be /{id} with type='POST'
+                url: "https://chatbot.bottrick.com/qas",
+                type: 'POST',
+                data: rowdata,
+                success: success,
+                error: error
+            });
+        }
+  });
+
+
+});
+</script>
+	<!--	ADMIN-->
+
 </head>
 <body>
-
-	<div id="chatbot">
-		<div class="chat-icon">
-			<img src="./assets/img/bottrick.jpg" alt="logo">
+<div id="header-wrapper">
+	<div id="header" class="container">
+		<div id="logo">
+			<span><a href="https://bottrick.com/"><img src="./assets/img/logo.png" alt="logo"></a></span>
+			<h1>CHATBOT</h1>
 		</div>
-		<div class="chat-window">
-			<header class="header">
-				<div class="avatar-image">
-					<img src="./assets/img/bottrick.jpg" alt="logo">
-				</div>
-				<div>
-					<h2 class="name">ChatBot</h2>
-					<small>Online</small>
-				</div>
-				<div class="close">
-					<i class="fas fa-times"></i>
-				</div>
-			</header>
-			<section class="messages">
-
-			</section>
-			<footer class="footer">
-				<input type="text" name="message" placeholder="Pošlite správu..." disabled>
-				<button id="send-message">
-					<i class="fas fa-paper-plane"></i>
-				</button>
-			</footer>
-		</div>
+		<div id="triangle-up"></div>
 	</div>
+</div>
+<div id="menu-wrapper">
+		<div id="menu">
+			<ul>
+<!--				<li class="current_page_item"><a href="#" accesskey="1" title="">Home</a></li>-->
+				<li><a href="#about" accesskey="1" title="">About</a></li>
+				<li><a href="#chatbotapp" accesskey="2" title="">Application</a></li>
+				<li><a href="#admin" accesskey="3" title="">Admin tool</a></li>
+			</ul>
+		</div>
+</div>
+<div id="wrapper">
+	<div id="featured-wrapper">
+	
+		<div class="extra2 container">
+			<div class="ebox1">
+				<div id=about class="title">
+					<h2>About</h2>
+					<span class="byline">Integer sit amet pede vel arcu aliquet pretium</span>
+				</div>
+				<div><span><img src="./assets/img/chatbot_01.svg" alt="chatbot"></span></div>
 
-	<script>
-		$(document).ready(function() {
-			let index = 0;
-			let chatBot = $('#chatbot');
-			let chatBotWindow = chatBot.find('.chat-window');
-			let sendMessage = chatBot.find('#send-message');
-			let messages = chatBot.find('.messages');
-			let messageInput = sendMessage.parent().find('input');
-			let aboutMe = $('<div>').addClass('message buttons choice').append(
-			    $('<a>').attr('href', '#').attr('data-action', 'about_me').html('About Me')
-			);
-			// Only for DEMO
-			chatBotWindow.toggle();
+				<p>This is <strong>Plushiness</strong>, a free, fully standards-compliant CSS template designed by <a href="http://templated.co" rel="nofollow">TEMPLATED</a>. The photos in this template are from <a href="http://fotogrph.com/"> Fotogrph</a>. This free template is released under the <a href="http://templated.co/license">Creative Commons Attribution</a> license, so you're pretty much free to do whatever you want with it (even use it commercially) provided you give us credit for it. Have fun :) </p>
+			</div>
 
-			chatBot.find('.chat-icon').click(function() {
-				chatBotWindow.toggle();
-				if (index === 0) {
-					buildMessage('Hi there! How can I help you?', 'ChatBot', 'author');
-					messages.append(aboutMe);
-					messageInput.prop('disabled', false);
-				}
-				// Scroll down on new message
-				messages.scrollTop(messages[0].scrollHeight);
-			});
+			<div class="ebox2">
+				<div id=chatbotapp class="title">
+					<h2>Application</h2>
+					<span class="byline">Integer sit amet pede vel arcu aliquet pretium</span>
+				</div>
 
-			chatBot.find('.close').click(function() {
-				chatBotWindow.toggle();
-			});
+				<div id="chatbot">
+					<div class="chat-window">
+						<header class="header">
+							<div class="avatar-image">
+								<img src="./assets/img/bottrick.jpg" alt="logo">
+							</div>
+							<div>
+								<h2 class="name">ChatBot</h2>
+								<small>Online</small>
+							</div>
+							<div class="close">
+								<i class="fas fa-times"></i>
+							</div>
+						</header>
+						<section class="messages">
 
-			// On send message
-			sendMessage.click(function() {
-				// Skip if empty message
-				if (messageInput.val() === '') return;
+						</section>
+						<footer class="footer">
+							<input type="text" name="message" placeholder="Send a message..." disabled>
+							<button id="send-message">
+								<i class="fas fa-paper-plane"></i>
+							</button>
+						</footer>
+					</div>
+					<div class="chat-icon">
+						<img src="./assets/img/bottrick.jpg" alt="logo">
+					</div>
+				</div>
+				<script>
+					$(document).ready(function() {
+						let index = 0;
+						let chatBot = $('#chatbot');
+						let chatBotWindow = chatBot.find('.chat-window');
+						let sendMessage = chatBot.find('#send-message');
+						let messages = chatBot.find('.messages');
+						let messageInput = sendMessage.parent().find('input');
+						let aboutMe = $('<div>').addClass('message buttons choice').append(
+							$('<a>').attr('href', '#').attr('data-action', 'about_me').html('About Me')
+						);
+						// Only for DEMO
+						chatBotWindow.toggle();
+						if (index === 0) {
+							buildMessage('Hi there! How can I help you?', 'ChatBot', 'author');
+							messages.append(aboutMe);
+							messageInput.prop('disabled', false);
+						}
+						// Scroll down on new message
+						messages.scrollTop(messages[0].scrollHeight);
+						// Only for DEMO
 
-				buildMessage(messageInput.val(), 'User', 'customer');
-
-				// Send data
-				sendData(messageInput.val(), false);
-				// Clear input value
-				messageInput.val('');
-				// Scroll down on new message
-				messages.scrollTop(messages[0].scrollHeight);
-			});
-
-			messageInput.on('keyup', function(e) {
-				if (e.keyCode === 13) {
-					e.preventDefault();
-					sendMessage.click();
-				}
-			});
-
-
-			// On button click
-			$(document).on('click', '#chatbot .messages .message.buttons:not(.first-choice) a', function(e) {
-				e.preventDefault();
-
-				// Send data
-				sendData($(this).data('action'), true);
-				// Clear input value
-				messageInput.val('');
-				// Scroll down on new message
-				messages.scrollTop(messages[0].scrollHeight);
-
-			});
-
-			function buildMessage(msg, name, type, avatar) {
-				if (typeof avatar === "undefined")
-					avatar = 'https://greendestinations.org/wp-content/uploads/2019/05/avatar-exemple.jpg';
-				if (type === 'author')
-					avatar = './assets/img/bottrick.jpg';
-
-				// Build message
-				let message = $('<div>').addClass('message-content').html(msg);
-				let fullMessage = $('<div>').addClass('message').data('index', index).addClass(type).data('type', type).append(
-					$('<div>').addClass('avatar').append(
-						$('<div>').addClass('avatar-image').append(
-							$('<img>').attr('src', avatar)
-						),
-						$('<span>').html(name)
-					),
-					$('<div>').addClass('message-content-wrapper').append(
-						message,
-						$('<div class="divider">')
-					)
-				);
-
-				let lasttMessage = $('.message:last');
-				if (lasttMessage.data('type') === type) {
-					lasttMessage.find('.message-content-wrapper').append(
-						message,
-						$('<div class="divider">')
-					);
-				} else {
-					messages.append(fullMessage);
-				}
-				index++;
-
-			}
-
-			function buildButtons(buttons) {
-				let type = 'choice';
-				let fullMessage = $('<div>').addClass('message').data('index', index).addClass('buttons').addClass(type).data('type', type);
-				$.each(buttons, function(i, item) {
-					fullMessage.append($('<a>').attr('href', '#').attr('data-action', item.action).html(item.value));
-				});
-				fullMessage.insertAfter(messages.find('.message.author:last'))
-
-			}
-
-			function sendData(data, action) {
-				$.ajax({
-					method: "POST",
-					dataType: "json",
-                    contentType: "application/json",
-					// url: "http://localhost:5000/bot",
-					url: "http://localhost:8080/bot",
-					data: JSON.stringify({
-						question: data,
-						action: action,
-						language: "sk"
-					}),
-					success: function (resp) {
-						try {
-							let obj = JSON.parse(JSON.stringify(resp));
-							buildMessage(obj.response, 'ChatBot', 'author');
-							if (obj.actions.length > 1) {
-							    buildButtons(obj.actions);
+						chatBot.find('.chat-icon').click(function() {
+							chatBotWindow.toggle();
+							if (index === 0) {
+								buildMessage('Hi there! How can I help you?', 'ChatBot', 'author');
+								messages.append(aboutMe);
+								messageInput.prop('disabled', false);
 							}
 							// Scroll down on new message
 							messages.scrollTop(messages[0].scrollHeight);
-						} catch (e) {
-							console.log("Error: ", e);
+						});
+
+						chatBot.find('.close').click(function() {
+							chatBotWindow.toggle();
+						});
+
+						// On send message
+						sendMessage.click(function() {
+							// Skip if empty message
+							if (messageInput.val() === '') return;
+
+							buildMessage(messageInput.val(), 'User', 'customer');
+
+							// Send data
+							sendData(messageInput.val(), false);
+							// Clear input value
+							messageInput.val('');
+							// Scroll down on new message
+							messages.scrollTop(messages[0].scrollHeight);
+						});
+
+						messageInput.on('keyup', function(e) {
+							if (e.keyCode === 13) {
+								e.preventDefault();
+								sendMessage.click();
+							}
+						});
+
+
+						// On button click
+						$(document).on('click', '#chatbot .messages .message.buttons:not(.first-choice) a', function(e) {
+							e.preventDefault();
+
+							// Send data
+							sendData($(this).data('action'), true);
+							// Clear input value
+							messageInput.val('');
+							// Scroll down on new message
+							messages.scrollTop(messages[0].scrollHeight);
+
+						});
+
+						function buildMessage(msg, name, type, avatar) {
+							if (typeof avatar === "undefined")
+								avatar = 'https://greendestinations.org/wp-content/uploads/2019/05/avatar-exemple.jpg';
+							if (type === 'author')
+								avatar = './assets/img/bottrick.jpg';
+
+							// Build message
+							let message = $('<div>').addClass('message-content').html(msg);
+							let fullMessage = $('<div>').addClass('message').data('index', index).addClass(type).data('type', type).append(
+								$('<div>').addClass('avatar').append(
+									$('<div>').addClass('avatar-image').append(
+										$('<img>').attr('src', avatar)
+									),
+									$('<span>').html(name)
+								),
+								$('<div>').addClass('message-content-wrapper').append(
+									message,
+									$('<div class="divider">')
+								)
+							);
+
+							let lasttMessage = $('.message:last');
+							if (lasttMessage.data('type') === type) {
+								lasttMessage.find('.message-content-wrapper').append(
+									message,
+									$('<div class="divider">')
+								);
+							} else {
+								messages.append(fullMessage);
+							}
+							index++;
+
 						}
-					}
-				});
-			}
-		});
-	</script>
+
+						function buildButtons(buttons) {
+							let type = 'choice';
+							let fullMessage = $('<div>').addClass('message').data('index', index).addClass('buttons').addClass(type).data('type', type);
+							$.each(buttons, function(i, item) {
+								fullMessage.append($('<a>').attr('href', '#').attr('data-action', item.action).html(item.value));
+							});
+							fullMessage.insertAfter(messages.find('.message.author:last'))
+
+						}
+
+						function sendData(data, action) {
+							$.ajax({
+								method: "POST",
+								dataType: "json",
+								contentType: "application/json",
+								// url: "http://localhost:8080/bot",
+								url: "https://chatbot.bottrick.com/bot",
+								data: JSON.stringify({
+									question: data,
+									action: action,
+									language: "sk"
+								}),
+								success: function (resp) {
+									try {
+										let obj = JSON.parse(JSON.stringify(resp));
+										buildMessage(obj.response, 'ChatBot', 'author');
+										if (obj.actions.length > 1) {
+											buildButtons(obj.actions);
+										}
+										// Scroll down on new message
+										messages.scrollTop(messages[0].scrollHeight);
+									} catch (e) {
+										console.log("Error: ", e);
+									}
+								}
+							});
+						}
+					});
+				</script>
+
+				<div id=admin class="title">
+					<h2>Admin Tool</h2>
+					<span class="byline">Integer sit amet pede vel arcu aliquet pretium</span>
+				</div>
+				<p>In posuere eleifend odio. Quisque semper augue mattis wisi. Maecenas ligula. Pellentesque viverra vulputate enim. Aliquam erat volutpat. Pellentesque tristique ante ut risus. Quisque dictum. Integer nisl risus, sagittis convallis, rutrum id, elementum congue, nibh. Suspendisse dictum porta lectus. Donec placerat odio vel elit. Nullam ante orci, pellentesque eget, tempus quis, ultrices in, est. Curabitur sit amet nulla. Nam in massa. Sed vel tellus. Curabitur sem urna, consequat vel, suscipit in, mattis placerat, nulla. Sed ac leo. Pellentesque imperdiet.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0" class="dataTable table table-striped" id="example">
+
+  				</table>
+
+			</div>		
+
+		</div>
+
+	</div>
+
+</div>
+<div id="stamp" class="container">
+	<div class="hexagon"><span class="icon icon-wrench"></span></div>
+</div>
+<div id="copyright" class="container">
+	<p>&copy; <a href="https://bottrick.com/" rel="nofollow">BoTTrick</a> | 2020</p>
+</div>
 </body>
 </html>
