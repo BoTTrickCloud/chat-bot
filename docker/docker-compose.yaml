@@ -12,7 +12,7 @@ services:
       context: ../
       dockerfile: docker/www/Dockerfile
     ports:
-    - "8081:80"
+    - "8280:80"
 
   chat-api:
     container_name: chat-api
@@ -31,7 +31,7 @@ services:
     volumes:
     - "/home/mato/Dev/bottrick/chatbot/data/db:/data:rw"
     ports:
-    - "8080:8080"
+    - "8281:8080"
 
   chat-bert:
     container_name: chat-bert

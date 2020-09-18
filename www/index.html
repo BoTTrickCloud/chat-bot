@@ -57,7 +57,7 @@ $(document).ready(function() {
     "sPaginationType": "full_numbers",
     ajax: {
         // url : "http://localhost:8080/qas",
-        url : "https://chatbot.bottrick.com/qas",
+        url : "https://api.chatbot.bottrick.com/qas",
         dataSrc : ''
     },
     columns: columnDefs,
@@ -86,7 +86,7 @@ $(document).ready(function() {
         onAddRow: function(datatable, rowdata, success, error) {
             $.ajax({
                 // a tipycal url would be / with type='PUT'
-                url: "https://chatbot.bottrick.com/qas",
+                url: "https://api.chatbot.bottrick.com/qas",
                 type: 'PUT',
                 data: rowdata,
                 success: success,
@@ -96,7 +96,7 @@ $(document).ready(function() {
         onDeleteRow: function(datatable, rowdata, success, error) {
             $.ajax({
                 // a tipycal url would be /{id} with type='DELETE'
-                url: "https://chatbot.bottrick.com/qas",
+                url: "https://api.chatbot.bottrick.com/qas",
                 type: 'DELETE',
                 data: rowdata,
                 success: success,
@@ -106,7 +106,7 @@ $(document).ready(function() {
         onEditRow: function(datatable, rowdata, success, error) {
             $.ajax({
                 // a tipycal url would be /{id} with type='POST'
-                url: "https://chatbot.bottrick.com/qas",
+                url: "https://api.chatbot.bottrick.com/qas",
                 type: 'POST',
                 data: rowdata,
                 success: success,
@@ -312,7 +312,7 @@ $(document).ready(function() {
 								dataType: "json",
 								contentType: "application/json",
 								// url: "http://localhost:8080/bot",
-								url: "https://chatbot.bottrick.com/bot",
+								url: "https://api.chatbot.bottrick.com/bot",
 								data: JSON.stringify({
 									question: data,
 									action: action,
