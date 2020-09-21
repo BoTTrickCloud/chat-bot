@@ -61,7 +61,7 @@ async def bot(request, *args):
 
     distance, question, answer = round(distances[0][0]), qas.question, qas.answer
 
-    if distance > 130:
+    if distance > int(request.config_dict["config"].DISTANCE_THRESHOLD):
         logger.warning(f"Distance: {distance}, ClientQ: {data['question']}, Q: {question}, A: {answer}")
         return web.json_response(
             {

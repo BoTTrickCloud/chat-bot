@@ -6,3 +6,6 @@ DB_PATH = "/home/mato/Dev/bottrick/chatbot/data/db/qas.sqlite"
 
 # === LOGGING ===
 LOGGING_LEVEL = "DEBUG"
+
+# === CHATBOT ===
+DISTANCE_THRESHOLD = "170"
