@@ -2,7 +2,6 @@ import logging
 import aiohttp_cors
 
 from aiohttp import web
-from aiohttp_basicauth_middleware import basic_auth_middleware
 from bert_serving.client import BertClient
 from sqlalchemy import create_engine
 from sqlalchemy_aio import ASYNCIO_STRATEGY
@@ -69,7 +68,5 @@ def create_app(config):
 
     # Routes
     app.add_routes(routes)
-    # Middlewares
-    # app.middlewares.append(basic_auth_middleware(("/"), {"bot": "bottrick"}))
     setup_cors(app)
     return app

@@ -8,7 +8,10 @@ LOGGING_CONFIG = {
         },
     },
     "handlers": {
-        "default": {"formatter": "standard", "class": "logging.StreamHandler",},
+        "default": {
+            "formatter": "standard",
+            "class": "logging.StreamHandler",
+        },
     },
     "loggers": {
         "": {"handlers": ["default"]},  # root logger

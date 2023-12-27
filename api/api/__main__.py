@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 def load_config(config):
     """Load API configuration settings
 
-    VStream default configuration settings is defined by `config_default.py` configuration file.
-    The default configuration values can be overwritten by values loaded from
-    environment variables.
+    API default configuration settings is defined by `config_default.py`
+    configuration file. The default configuration values can be overwritten
+    by values loaded from environment variables.
 
     Args:
         config (object):  API default configuration object

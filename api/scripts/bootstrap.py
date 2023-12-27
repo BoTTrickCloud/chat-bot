@@ -1,7 +1,19 @@
+"""
+SQUAD NOTES:
+# import json
+# with open(source_path) as f:
+#     data = json.load(f)
+# for qas in paragraph["qas"]:
+#     answers = []
+#     for answer in qas["answers"]:
+#         answers.append(answer["text"])
+#     question = qas["question"]
+#     _id = qas["id"]
+"""
 import argparse
 import asyncio
-import json
 import sys
+import random
 
 from bert_serving.client import BertClient
 from sqlalchemy import create_engine
@@ -12,44 +24,117 @@ from api.data import Qas, STATIC
 
 
 def bert_session(bert_host):
-    """Create bert connection
-    """
+    """Create bert connection"""
     return BertClient(ip=bert_host)
 
 
 def db_session(db_path):
-    """Create database connection
-    """
+    """Create database connection"""
     return create_engine(f"sqlite:///{db_path}", strategy=ASYNCIO_STRATEGY)
 
 
-async def load_dataset(bert, db, source_path):
+QAS_SAMPLES = {
+    "intents": [
+        {
+            "tag": "greeting",
+            "patterns": [
+                "Hi",
+                "How are you",
+                "Is anyone there?",
+                "Hello",
+                "Good day",
+                "Whats up",
+            ],
+            "responses": [
+                "Hello!",
+                "Good to see you again!",
+                "Hi there, how can I help?",
+            ],
+            "context_set": "",
+        },
+        {
+            "tag": "goodbye",
+            "patterns": [
+                "cya",
+                "See you later",
+                "Goodbye",
+                "I am Leaving",
+                "Have a Good day",
+            ],
+            "responses": ["Sad to see you go :(", "Talk to you later", "Goodbye!"],
+            "context_set": "",
+        },
+        {
+            "tag": "age",
+            "patterns": [
+                "how old",
+                "how old is Chatbot",
+                "what is your age",
+                "how old are you",
+                "age?",
+            ],
+            "responses": ["I am 18 years old!", "18 years young!"],
+            "context_set": "",
+        },
+        {
+            "tag": "name",
+            "patterns": [
+                "what is your name",
+                "what should I call you",
+                "whats your name?",
+            ],
+            "responses": ["You can call me Chatbot.", "I'm Chatbot!"],
+            "context_set": "",
+        },
+        {
+            "tag": "shop",
+            "patterns": [
+                "Id like to buy something",
+                "whats on the menu",
+                "what do you reccommend?",
+                "could i get something to eat",
+            ],
+            "responses": [
+                "We sell chocolate chip cookies for $2!",
+                "Cookies are on the menu!",
+            ],
+            "context_set": "",
+        },
+        {
+            "tag": "hours",
+            "patterns": [
+                "when are you guys open",
+                "what are your hours",
+                "hours of operation",
+            ],
+            "responses": ["We are open 7am-4pm Monday-Friday!"],
+            "context_set": "",
+        },
+    ]
+}
 
-    with open(source_path) as f:
-        data = json.load(f)
 
-    # await db.execute(DropTable(Qas))
+async def load_dataset(bert, db):
+
+    await db.execute(DropTable(Qas))
     await db.execute(CreateTable(Qas))
 
     async with db.connect() as conn:
-        for item in data["data"]:
-            title = item["title"]
-            for paragraph in item["paragraphs"]:
-                for qas in paragraph["qas"]:
-                    answers = []
-                    for answer in qas["answers"]:
-                        answers.append(answer["text"])
-                    question = qas["question"]
-                    _id = qas["id"]
-                    vector = bert.encode([question])[0]
-                    await conn.execute(Qas.insert().values(
+        for item in QAS_SAMPLES["intents"]:
+            title = item["tag"]
+
+            for question in item["patterns"]:
+                response = random.choice(item["responses"])
+                vector = bert.encode([question])[0]
+                await conn.execute(
+                    Qas.insert().values(
                         static=False,
-                        qas_id=_id,
                         title=title,
                         question=question,
-                        answer=answers[0],
-                        vector=";".join([str(v) for v in vector])
-                    ))
+                        answer=response,
+                        vector=";".join([str(v) for v in vector]),
+                    )
+                )
 
 
 async def load_static(db):
@@ -58,45 +143,29 @@ async def load_static(db):
 
         for action, text in STATIC.items():
 
-            await conn.execute(Qas.insert().values(
-                static=True,
-                question=action,
-                answer=text,
-            ))
+            await conn.execute(
+                Qas.insert().values(
+                    static=True,
+                    question=action,
+                    answer=text,
+                )
+            )
 
 
-def main(bert_host, db_path, source_path, static):
+def main(bert_host, db_path):
 
     bert = bert_session(bert_host)
     db = db_session(db_path)
 
-    if not static:
-        asyncio.run(load_dataset(bert, db, source_path))
-    else:
-        asyncio.run(load_static(db))
+    asyncio.run(load_dataset(bert, db))
+    asyncio.run(load_static(db))
+
+
+parser = argparse.ArgumentParser(description="Bootstrap ChatBot DB")
+parser.add_argument("--bert-host", default="localhost", help="BERT host address")
+parser.add_argument("--db-path", default="../db/qas.sqlite", help="DB path")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Bootstrap ChatBot DB")
-    parser.add_argument(
-        "--bert-host",
-        default="localhost",
-        help="BERT host address"
-    )
-    parser.add_argument(
-        "--db-path",
-        default="../../data/db/qas.sqlite",
-        help="DB path"
-    )
-    parser.add_argument(
-        "--source-path",
-        default="../../data/dev-v1.1.json",
-        help="Source file path"
-    )
-    parser.add_argument(
-        "--static",
-        help="Enable the static load.",
-        action="store_true",
-    )
     arguments = vars(parser.parse_args())
     sys.exit(main(**arguments))

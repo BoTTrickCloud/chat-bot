@@ -29,7 +29,7 @@ services:
     - BERT_HOST=chat-bert
     - DB_PATH=/data/qas.sqlite
     volumes:
-    - "/home/mato/Dev/bottrick/chatbot/data/db:/data:rw"
+    - "$DB_PATH:/data:rw"
     ports:
     - "8281:8080"
 
@@ -45,7 +45,7 @@ services:
       args:
         NUM_WORKER: "1"
     volumes:
-    - "/home/mato/Dev/bottrick/chatbot/data/model/multi_cased_L-12_H-768_A-12:/model:ro"
-#    ports:
-#    - "5555:5555"
-#    - "5556:5556"
+    - "$BERT_PATH:/model:ro"
+    ports:
+    - "5555:5555"
+    - "5556:5556"
